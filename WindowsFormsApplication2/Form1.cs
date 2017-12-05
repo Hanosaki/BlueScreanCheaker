@@ -20,80 +20,88 @@ namespace WindowsFormsApplication2
         {
             InitializeComponent();
 
-            using (var tmp = new RunspaceInvoke())
+            try
             {
-                Label label = testLabel;
-                
-                string getSytemLog = @"Get-EventLog System";
-                string getAppLog = @"Get-EventLog Application";
 
-                var systemLog = tmp.Invoke(getSytemLog, new object[] { });
-                var appLog = tmp.Invoke(getAppLog, new object[] { });
-
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
-
-                ArrayList info = new ArrayList();
-                string time = "0";
-
-                foreach (var r in systemLog)
+                using (var tmp = new RunspaceInvoke())
                 {
-                    var id = r.Properties["EventID"].Value.ToString();
-                    if (id == "41")
-                    {
-                        time = r.Properties["TimeGenerated"].Value.ToString().Remove(10);
+                    Label label = testLabel;
 
-                        info.Add("--------(" + time + ")----------");
-                        info.Add("--------ApplicationLog----------");                        
-                        foreach (var m in appLog)
+                    string getSytemLog = @"Get-EventLog System";
+                    string getAppLog = @"Get-EventLog Application";
+
+                    var systemLog = tmp.Invoke(getSytemLog, new object[] { });
+                    var appLog = tmp.Invoke(getAppLog, new object[] { });
+
+                    var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
+
+                    ArrayList info = new ArrayList();
+                    string time = "0";
+
+                    foreach (var r in systemLog)
+                    {
+                        var id = r.Properties["EventID"].Value.ToString();
+                        if (id == "41")
                         {
-                            if (m.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
+                            time = r.Properties["TimeGenerated"].Value.ToString().Remove(10);
+
+                            info.Add("--------(" + time + ")----------");
+                            info.Add("--------ApplicationLog----------");
+                            foreach (var m in appLog)
                             {
-                                //同じ時間が見つかった場合の処理
-                                if (!m.Properties["EntryType"].Value.ToString().Equals("Information")
-                                    && !m.Properties["EntryType"].Value.ToString().Equals("0"))
-                                info.Add(m.Properties["EventID"].Value.ToString() +
-                                ","
-                                + m.Properties["Message"].Value.ToString());
+                                if (m.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
+                                {
+                                    //同じ時間が見つかった場合の処理
+                                    if (!m.Properties["EntryType"].Value.ToString().Equals("Information")
+                                        && !m.Properties["EntryType"].Value.ToString().Equals("0"))
+                                        info.Add(m.Properties["EventID"].Value.ToString() +
+                                        ","
+                                        + m.Properties["Message"].Value.ToString());
+                                }
                             }
+
+                            info.Add("---------SystemLog-----------");
+
                         }
 
-                        info.Add("---------SystemLog-----------");
+                        if (id != "41" && r.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
+                        {
+                            //ここで，イベントIDとメッセージを受け取る
+                            if (!r.Properties["EntryType"].Value.ToString().Equals("Information"))
+                                info.Add(r.Properties["EventID"].Value.ToString() +
+                                    ","
+                                    + r.Properties["Message"].Value.ToString());
+                        }
+
 
                     }
-
-                    if (id != "41" && r.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
+                    char[] removeCharas = new char[] { '\r', '\n' };
+                    string[] str = new string[info.Count];
+                    writer.WriteLine("EventID,Message");
+                    int count = 0;
+                    foreach (var i in info)
                     {
-                        //ここで，イベントIDとメッセージを受け取る
-                        if (!r.Properties["EntryType"].Value.ToString().Equals("Information"))
-                        info.Add(r.Properties["EventID"].Value.ToString() +
-                            "," 
-                            +r.Properties["Message"].Value.ToString());
+                        str[count] = i.ToString();
+                        ++count;
                     }
 
-                    
-                }
-                char[] removeCharas = new char[] { '\r', '\n' };
-                string[] str = new string[info.Count];
-                writer.WriteLine("EventID,Message");
-                int count = 0;
-                foreach (var i in info)
-                {
-                    str[count] = i.ToString();
-                    ++count;
-                }
-
-                for (int i = 0; i < str.Length;++i )
-                {
-                    foreach (char c in removeCharas)
-                        str[i] = str[i].Replace(c.ToString(), "");
-                    writer.WriteLine(str[i]);
-                }
+                    for (int i = 0; i < str.Length; ++i)
+                    {
+                        foreach (char c in removeCharas)
+                            str[i] = str[i].Replace(c.ToString(), "");
+                        writer.WriteLine(str[i]);
+                    }
 
                     writer.Close();
 
+                }
+
             }
-            
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }
