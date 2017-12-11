@@ -16,6 +16,9 @@ namespace WindowsFormsApplication2
 {
     public partial class Form1 : Form
     {
+
+        int counts = 0, MostFrequentlyID = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -37,6 +40,7 @@ namespace WindowsFormsApplication2
                     var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
 
                     ArrayList info = new ArrayList();
+                    ArrayList ids = new ArrayList();
                     string time = "0";
 
                     foreach (var r in systemLog)
@@ -48,20 +52,46 @@ namespace WindowsFormsApplication2
 
                             info.Add("--------(" + time + ")----------");
                             info.Add("--------ApplicationLog----------");
+
+                            string[] row_1 = { "日時", "--------(" + time + ")----------" };
+                            string[] row_2 = { "LogName", "--------ApplicationLog----------" };
+
+                            ErrorListView.Items.Add(new ListViewItem(row_1));
+                            ErrorListView.Items.Add(new ListViewItem(row_2));
+
                             foreach (var m in appLog)
                             {
                                 if (m.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
                                 {
                                     //同じ時間が見つかった場合の処理
-                                    if (!m.Properties["EntryType"].Value.ToString().Equals("Information")
-                                        && !m.Properties["EntryType"].Value.ToString().Equals("0"))
-                                        info.Add(m.Properties["EventID"].Value.ToString() +
-                                        ","
-                                        + m.Properties["Message"].Value.ToString());
+                                    if (!m.Properties["EntryType"].Value.ToString().Equals("Information"))
+                                    {
+
+                                        if (!m.Properties["EntryType"].Value.ToString().Equals("0"))
+                                        {
+                                            info.Add(m.Properties["EventID"].Value.ToString() +
+                                            ","
+                                            + m.Properties["Message"].Value.ToString());
+
+                                            string[] row_3 = { m.Properties["EventID"].Value.ToString(),
+                                                         m.Properties["Message"].Value.ToString() };
+
+                                            ErrorListView.Items.Add(new ListViewItem(row_3));
+
+                                            ids.Add(m.Properties["EventID"].Value.ToString());
+                                        }
+
+                                    }
+
                                 }
                             }
 
                             info.Add("---------SystemLog-----------");
+
+                            string[] row_4 = { "LogName", "---------SystemLog-----------" };
+
+                            ErrorListView.Items.Add(new ListViewItem(row_4));
+
 
                         }
 
@@ -69,9 +99,20 @@ namespace WindowsFormsApplication2
                         {
                             //ここで，イベントIDとメッセージを受け取る
                             if (!r.Properties["EntryType"].Value.ToString().Equals("Information"))
+                            {
                                 info.Add(r.Properties["EventID"].Value.ToString() +
                                     ","
                                     + r.Properties["Message"].Value.ToString());
+
+                                string[] row_3 = { r.Properties["EventID"].Value.ToString(),
+                                                         r.Properties["Message"].Value.ToString() };
+
+                                ErrorListView.Items.Add(new ListViewItem(row_3));
+                                
+                                ids.Add(r.Properties["EventID"].Value.ToString());
+
+
+                            }
                         }
 
 
@@ -91,10 +132,30 @@ namespace WindowsFormsApplication2
                         foreach (char c in removeCharas)
                             str[i] = str[i].Replace(c.ToString(), "");
                         writer.WriteLine(str[i]);
-                    }
-
+                    }            
                     writer.Close();
 
+                    while(ids.Count != 0)
+                    {
+                        var tmpID = ids[0].ToString();
+                        int idCount = 0;
+
+                        foreach(var i in ids)
+                        {
+                            if(i.ToString() == tmpID )
+                                ++idCount;
+                        }
+
+                        if (counts < idCount)
+                        {
+                            counts = idCount;
+                            MostFrequentlyID = int.Parse(tmpID);
+                        }
+
+                        ids.Remove(tmpID);
+
+                    }
+                    
                 }
 
             }
@@ -102,6 +163,19 @@ namespace WindowsFormsApplication2
             {
                 MessageBox.Show(e.Message);
             }
+
+            ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            MessageBox.Show("最も検出されたErrorID:" + MostFrequentlyID + "," + counts + "回検出されました." +
+                "\nこのIDで検索すると，解決のヒントが見つかるかもしれません．");
         }
     }
 }
