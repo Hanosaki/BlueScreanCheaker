@@ -17,7 +17,7 @@ namespace WindowsFormsApplication2
     public partial class Form1 : Form
     {
 
-        int counts = 0, MostFrequentlyID = 0;
+        int counts = 0, MostFrequentlyID_System = 0, MostFrequentlyID_Application = 0, counts_system = 0;
 
         public Form1()
         {
@@ -40,7 +40,10 @@ namespace WindowsFormsApplication2
                     var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
 
                     ArrayList info = new ArrayList();
-                    ArrayList ids = new ArrayList();
+                    //ArrayList ids = new ArrayList();
+                    ArrayList application_ids = new ArrayList();
+                    ArrayList system_ids = new ArrayList();
+
                     string time = "0";
 
                     foreach (var r in systemLog)
@@ -78,7 +81,8 @@ namespace WindowsFormsApplication2
 
                                             ErrorListView.Items.Add(new ListViewItem(row_3));
 
-                                            ids.Add(m.Properties["EventID"].Value.ToString());
+                                            //ids.Add(m.Properties["EventID"].Value.ToString());
+                                            application_ids.Add(m.Properties["EventID"].Value.ToString());
                                         }
 
                                     }
@@ -109,8 +113,8 @@ namespace WindowsFormsApplication2
 
                                 ErrorListView.Items.Add(new ListViewItem(row_3));
                                 
-                                ids.Add(r.Properties["EventID"].Value.ToString());
-
+                                //ids.Add(r.Properties["EventID"].Value.ToString());
+                                system_ids.Add(r.Properties["EventID"].Value.ToString());
 
                             }
                         }
@@ -135,12 +139,12 @@ namespace WindowsFormsApplication2
                     }            
                     writer.Close();
 
-                    while(ids.Count != 0)
+                    while(application_ids.Count != 0)
                     {
-                        var tmpID = ids[0].ToString();
+                        var tmpID = application_ids[0].ToString();
                         int idCount = 0;
 
-                        foreach(var i in ids)
+                        foreach(var i in application_ids)
                         {
                             if(i.ToString() == tmpID )
                                 ++idCount;
@@ -149,12 +153,34 @@ namespace WindowsFormsApplication2
                         if (counts < idCount)
                         {
                             counts = idCount;
-                            MostFrequentlyID = int.Parse(tmpID);
+                            MostFrequentlyID_Application = int.Parse(tmpID);
                         }
 
-                        ids.Remove(tmpID);
+                        application_ids.Remove(tmpID);
 
                     }
+
+                    while (system_ids.Count != 0)
+                    {
+                        var tmpID = system_ids[0].ToString();
+                        int idCount = 0;
+
+                        foreach (var i in system_ids)
+                        {
+                            if (i.ToString() == tmpID)
+                                ++idCount;
+                        }
+
+                        if (counts_system < idCount)
+                        {
+                            counts_system = idCount;
+                            MostFrequentlyID_System = int.Parse(tmpID);
+                        }
+
+                        system_ids.Remove(tmpID);
+
+                    }
+
                     
                 }
 
@@ -174,8 +200,9 @@ namespace WindowsFormsApplication2
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            MessageBox.Show("最も検出されたErrorID:" + MostFrequentlyID + "," + counts + "回検出されました." +
-                "\nこのIDで検索すると，解決のヒントが見つかるかもしれません．");
+            MessageBox.Show("最も検出されたErrorID(System):" + MostFrequentlyID_System + "," + counts_system + "回検出されました.\n" +
+                "最も検出されたErrorID(Application):" + MostFrequentlyID_Application + "," + counts + "回検出されました.\n"+
+                "このIDで検索すると，解決のヒントが見つかるかもしれません．");
         }
     }
 }
