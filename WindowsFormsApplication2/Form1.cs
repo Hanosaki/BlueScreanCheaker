@@ -40,7 +40,6 @@ namespace WindowsFormsApplication2
                     var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
 
                     ArrayList info = new ArrayList();
-                    //ArrayList ids = new ArrayList();
                     ArrayList application_ids = new ArrayList();
                     ArrayList system_ids = new ArrayList();
 
@@ -80,8 +79,6 @@ namespace WindowsFormsApplication2
                                                          m.Properties["Message"].Value.ToString() };
 
                                             ErrorListView.Items.Add(new ListViewItem(row_3));
-
-                                            //ids.Add(m.Properties["EventID"].Value.ToString());
                                             application_ids.Add(m.Properties["EventID"].Value.ToString());
                                         }
 
@@ -112,8 +109,6 @@ namespace WindowsFormsApplication2
                                                          r.Properties["Message"].Value.ToString() };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_3));
-                                
-                                //ids.Add(r.Properties["EventID"].Value.ToString());
                                 system_ids.Add(r.Properties["EventID"].Value.ToString());
 
                             }
