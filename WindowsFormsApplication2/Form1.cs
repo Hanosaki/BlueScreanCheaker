@@ -18,6 +18,7 @@ namespace WindowsFormsApplication2
     {
 
         int counts = 0, MostFrequentlyID_System = 0, MostFrequentlyID_Application = 0, counts_system = 0;
+        ArrayList code_1000 = new ArrayList();
 
         public Form1()
         {
@@ -70,7 +71,6 @@ namespace WindowsFormsApplication2
 
                             foreach (var m in appLog)
                             {
-                                //特定のログから読み込む場合は，IDが違うので注意！
                                 if (m.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                                 {
                                     //同じ時間が見つかった場合の処理
@@ -84,11 +84,33 @@ namespace WindowsFormsApplication2
                                             ","
                                             + m.Properties["Message"].Value.ToString());
 
-                                            string[] row_3 = { m.Properties["Id"].Value.ToString(),
+                                            //ID:1000番はカウントせずに検出されたことだけを記録する
+                                            if (m.Properties["Id"].Value.ToString().Equals("1000"))
+                                            {
+                                                var name_1000 = m.Properties["Message"].Value.ToString();
+                                                var name_fast = name_1000.IndexOf("名:") + 2;
+                                                var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
+                                                name_1000 = name_1000.Substring(name_fast, name_last);
+                                                if(code_1000.Count != 0)
+                                                {
+                                                    //同じ名前がなければ追加
+                                                    if(code_1000.IndexOf(name_1000) == -1 )
+                                                    {
+                                                        code_1000.Add(name_1000);
+                                                    }
+                                                }
+                                                else
+                                                    code_1000.Add(name_1000);
+                                                
+                                            }
+                                            else //ID1000番以外の場合，検出回数を記録し，リストに表示する
+                                            {
+                                                string[] row_3 = { m.Properties["Id"].Value.ToString(),
                                                          m.Properties["Message"].Value.ToString() };
 
-                                            ErrorListView.Items.Add(new ListViewItem(row_3));
-                                            application_ids.Add(m.Properties["Id"].Value.ToString());
+                                                ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                application_ids.Add(m.Properties["Id"].Value.ToString());
+                                            }
                                         }
 
                                     }
@@ -206,9 +228,15 @@ namespace WindowsFormsApplication2
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            MessageBox.Show("最も検出されたErrorID(System):" + MostFrequentlyID_System + "," + counts_system + "回検出されました.\n" +
-                "最も検出されたErrorID(Application):" + MostFrequentlyID_Application + "," + counts + "回検出されました.\n"+
-                "このIDで検索すると，解決のヒントが見つかるかもしれません．");
+            var text = "最も検出されたErrorID(System):" + MostFrequentlyID_System + "," + counts_system + "回検出されました.\n" +
+                "最も検出されたErrorID(Application):" + MostFrequentlyID_Application + "," + counts + "回検出されました.\n\n" +
+                "このIDで検索すると，解決のヒントが見つかるかもしれません．\n\n" +
+                "また，以下のアプリケーションはID1000番が検出されました．\n製造元に問い合わせてみてください．\n";
+            foreach (var c in code_1000)
+            {
+                text += "・" + c.ToString() + "\n";
+            }
+            MessageBox.Show(text);
         }
     }
 }
