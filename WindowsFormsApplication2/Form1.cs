@@ -95,6 +95,10 @@ namespace WindowsFormsApplication2
                                                     code_1000.Add(name_1000);
 
                                             }
+                                            else if (m.Properties["EventID"].Value.ToString().Equals("0"))
+                                            {
+                                                //ID:0は情報を持たない為，無視する
+                                            }
                                             else //ID1000番以外の場合，検出回数を記録し，リストに表示する
                                             {
                                                 string[] row_3 = { m.Properties["EventID"].Value.ToString(),
