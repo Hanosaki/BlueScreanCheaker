@@ -24,6 +24,9 @@ namespace WindowsFormsApplication2
         {
             InitializeComponent();
 
+            Form2 form2 = new Form2();
+            form2.Show();
+
             ArrayList info = new ArrayList();
             ArrayList application_ids = new ArrayList();
             ArrayList system_ids = new ArrayList();
@@ -49,6 +52,10 @@ namespace WindowsFormsApplication2
                     sr.Close();
 
                     var systemLog = tmp.Invoke(taskSytem, new object[] { });
+                    
+                    form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
+                    form2.Update();
+
                     var appLog = tmp.Invoke(taskApp, new object[] { });
 
                     string time = "0";
@@ -219,6 +226,7 @@ namespace WindowsFormsApplication2
             }
 
             ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            form2.Close();
 
         }
 
