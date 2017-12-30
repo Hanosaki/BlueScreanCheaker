@@ -1,1 +1,1 @@
-Get-WinEvent -FilterHashTable @{path = "C:\Users\Sigure\Desktop\log1.evtx"}
+Get-WinEvent -FilterHashTable @{path = "C:\Users\Sigure\Desktop\nakasonePC-Application.evtx"}

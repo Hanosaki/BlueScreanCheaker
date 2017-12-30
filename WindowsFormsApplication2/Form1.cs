@@ -78,6 +78,8 @@ namespace WindowsFormsApplication2
 
                             foreach (var m in appLog)
                             {
+                                if (time.Equals("2017/11/08"))
+                                    Console.WriteLine("hoge");
                                 if (m.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                                 {
                                     //同じ時間が見つかった場合の処理
@@ -85,7 +87,8 @@ namespace WindowsFormsApplication2
                                     {
 
                                         if (!m.Properties["Level"].Value.ToString().Equals("0") &&
-                                            !m.Properties["Id"].Value.ToString().Equals("0"))
+                                            !m.Properties["Id"].Value.ToString().Equals("0") &&
+                                            !m.Properties["Id"].Value.ToString().Equals("41"))
                                         {
                                             info.Add(m.Properties["Id"].Value.ToString() +
                                             ","
@@ -97,6 +100,8 @@ namespace WindowsFormsApplication2
                                                 var name_1000 = m.Properties["Message"].Value.ToString();
                                                 var name_fast = name_1000.IndexOf("名:") + 2;
                                                 var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
+                                                if(name_last < 0)
+                                                    name_last = name_1000.IndexOf(".EXE") - (name_fast - 4);
                                                 name_1000 = name_1000.Substring(name_fast, name_last);
                                                 if(code_1000.Count != 0)
                                                 {
@@ -134,12 +139,18 @@ namespace WindowsFormsApplication2
 
                         }
 
+                        if (r.Properties["Id"].Value.ToString().Equals("7039"))
+                            Console.WriteLine("hoge");
+
+
+
                         if (id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                         {
                             //ここで，イベントIDとメッセージを受け取る
                             if (!r.Properties["Level"].Value.ToString().Equals("4") &&
                                 !r.Properties["Id"].Value.ToString().Equals("6") &&
-                                !r.Properties["Id"].Value.ToString().Equals("4115"))
+                                !r.Properties["Id"].Value.ToString().Equals("4115") &&
+                                !r.Properties["Id"].Value.ToString().Equals("10005"))
                             {
                                 info.Add(r.Properties["Id"].Value.ToString() +
                                     ","
