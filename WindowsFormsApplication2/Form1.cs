@@ -53,7 +53,7 @@ namespace WindowsFormsApplication2
                     sr.Close();
 
                     var systemLog = tmp.Invoke(taskSytem, new object[] { });
-                    
+
                     form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
                     form2.Update();
 
@@ -165,11 +165,11 @@ namespace WindowsFormsApplication2
 
 
                     }
-                    
+
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message + "id:" + id);
             }
@@ -245,15 +245,36 @@ namespace WindowsFormsApplication2
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            var text = "最も検出されたErrorID(System):" + MostFrequentlyID_System + "," + counts_system + "回検出されました.\n" +
-                "最も検出されたErrorID(Application):" + MostFrequentlyID_Application + "," + counts + "回検出されました.\n\n" +
-                "以上のIDのメッセージを参照してみてください．\n\n" +
-                "また，以下のアプリケーションはID1000番が検出されました．\n製造元に問い合わせてみてください．\n";
-            foreach (var c in code_1000)
+            setText();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            setText();
+        }
+
+        private void setText()
+        {
+            var text = "システムで最も多かったエラー：\nID：[" + MostFrequentlyID_System + "]\n回数：[" + counts_system + "]回\n\n" +
+                       "アプリケーションで最も多かったエラー：\nID：[" + MostFrequentlyID_Application + "]\n回数：[" + counts + "]回\n\n" +
+                       "以上のIDのメッセージを参照してみてください.";
+
+            if (code_1000.Count > 0)
             {
-                text += "・" + c.ToString() + "\n";
+
+                text += "\n\nまた，以下のアプリケーションはID：1000番が検出されました．\nID：1000番はクラッシュしたという記録情報です． \n製造元に問い合わせてみてください．\n";
+                foreach (var c in code_1000)
+                {
+                    text += "・" + c.ToString() + "\n";
+                }
             }
+            //Form3 form3 = new Form3();
+            //form3.anotation = text;
+            //var label = form3.label;
+            //form3.Height = label.Height + button1.Height;
+            //form3.Show();
             MessageBox.Show(text);
         }
+
     }
 }

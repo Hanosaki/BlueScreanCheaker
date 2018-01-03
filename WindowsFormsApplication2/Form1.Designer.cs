@@ -32,6 +32,7 @@
             this.ErrorListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // testLabel
@@ -45,14 +46,17 @@
             // 
             // ErrorListView
             // 
+            this.ErrorListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ErrorListView.BackColor = System.Drawing.SystemColors.Window;
             this.ErrorListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.ErrorListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ErrorListView.LabelEdit = true;
-            this.ErrorListView.Location = new System.Drawing.Point(0, 0);
+            this.ErrorListView.Location = new System.Drawing.Point(0, 29);
             this.ErrorListView.Name = "ErrorListView";
-            this.ErrorListView.Size = new System.Drawing.Size(284, 261);
+            this.ErrorListView.Size = new System.Drawing.Size(284, 232);
             this.ErrorListView.TabIndex = 1;
             this.ErrorListView.UseCompatibleStateImageBehavior = false;
             this.ErrorListView.View = System.Windows.Forms.View.Details;
@@ -66,11 +70,22 @@
             this.columnHeader2.Text = "Message";
             this.columnHeader2.Width = 200;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "通知再表示";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.ErrorListView);
             this.Controls.Add(this.testLabel);
             this.Name = "Form1";
@@ -89,6 +104,7 @@
         private System.Windows.Forms.ListView ErrorListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
