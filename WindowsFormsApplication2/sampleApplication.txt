@@ -1,1 +1,1 @@
-Get-WinEvent -FilterHashTable @{path = "C:\jikken-Application.evtx"}
+Get-WinEvent -FilterHashTable @{path = "C:\Users\Sigure\Desktop\log1.evtx"}
