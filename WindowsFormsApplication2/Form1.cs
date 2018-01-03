@@ -66,10 +66,11 @@ namespace WindowsFormsApplication2
                         id = r.Properties["Id"].Value.ToString();
                         if (id == "41")
                         {
+
+                            time = r.Properties["TimeCreated"].Value.ToString().Remove(10);
+
                             if (time != tmpTime)
                             {
-                                time = r.Properties["TimeCreated"].Value.ToString().Remove(10);
-
                                 info.Add("--------(" + time + ")----------");
                                 info.Add("--------ApplicationLog----------");
 
@@ -130,15 +131,13 @@ namespace WindowsFormsApplication2
 
                                     }
                                 }
+
+                                info.Add("---------SystemLog-----------");
+
+                                string[] row_4 = { "LogName", "---------SystemLog-----------" };
+
+                                ErrorListView.Items.Add(new ListViewItem(row_4));
                             }
-
-                            info.Add("---------SystemLog-----------");
-
-                            string[] row_4 = { "LogName", "---------SystemLog-----------" };
-
-                            ErrorListView.Items.Add(new ListViewItem(row_4));
-
-
                         }
 
                         tmpTime = time;
