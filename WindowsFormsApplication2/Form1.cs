@@ -24,6 +24,9 @@ namespace WindowsFormsApplication2
         {
             InitializeComponent();
 
+            Form2 form2 = new Form2();
+            form2.Show();
+
             try
             {
 
@@ -35,7 +38,12 @@ namespace WindowsFormsApplication2
                     string getAppLog = @"Get-EventLog Application";
 
                     var systemLog = tmp.Invoke(getSytemLog, new object[] { });
+                    form2.systemLabel = "取得完了！";
+                    form2.Update();
+
                     var appLog = tmp.Invoke(getAppLog, new object[] { });
+                    form2.applicationLabel = "取得完了!";
+                    form2.Update();
 
                     var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
@@ -45,6 +53,7 @@ namespace WindowsFormsApplication2
                     ArrayList system_ids = new ArrayList();
 
                     string time = "0";
+                    string tmpTime = "0";
 
                     foreach (var r in systemLog)
                     {
@@ -53,64 +62,68 @@ namespace WindowsFormsApplication2
                         {
                             time = r.Properties["TimeGenerated"].Value.ToString().Remove(10);
 
-                            info.Add("--------(" + time + ")----------");
-                            info.Add("--------ApplicationLog----------");
-
-                            string[] row_1 = { "日時", "--------(" + time + ")----------" };
-                            string[] row_2 = { "LogName", "--------ApplicationLog----------" };
-
-                            ErrorListView.Items.Add(new ListViewItem(row_1));
-                            ErrorListView.Items.Add(new ListViewItem(row_2));
-
-                            foreach (var m in appLog)
+                            if (time != tmpTime)
                             {
-                                if (m.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
+
+                                info.Add("--------(" + time + ")----------");
+                                info.Add("--------ApplicationLog----------");
+
+                                string[] row_1 = { "日時", "--------(" + time + ")----------" };
+                                string[] row_2 = { "LogName", "--------ApplicationLog----------" };
+
+                                ErrorListView.Items.Add(new ListViewItem(row_1));
+                                ErrorListView.Items.Add(new ListViewItem(row_2));
+
+                                foreach (var m in appLog)
                                 {
-                                    //同じ時間が見つかった場合の処理
-                                    if (!m.Properties["EntryType"].Value.ToString().Equals("Information"))
+                                    if (m.Properties["TimeGenerated"].Value.ToString().Remove(10) == time)
                                     {
-
-                                        if (!m.Properties["EntryType"].Value.ToString().Equals("0"))
+                                        //同じ時間が見つかった場合の処理
+                                        if (!m.Properties["EntryType"].Value.ToString().Equals("Information"))
                                         {
-                                            info.Add(m.Properties["EventID"].Value.ToString() +
-                                            ","
-                                            + m.Properties["Message"].Value.ToString());
 
-                                            //ID:1000番はカウントせずに検出されたことだけを記録する
-                                            if (m.Properties["EventID"].Value.ToString().Equals("1000"))
+                                            if (!m.Properties["EntryType"].Value.ToString().Equals("0"))
                                             {
-                                                var name_1000 = m.Properties["Message"].Value.ToString();
-                                                var name_fast = name_1000.IndexOf("名:") + 2;
-                                                var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
-                                                name_1000 = name_1000.Substring(name_fast, name_last);
-                                                if (code_1000.Count != 0)
+                                                info.Add(m.Properties["EventID"].Value.ToString() +
+                                                ","
+                                                + m.Properties["Message"].Value.ToString());
+
+                                                //ID:1000番はカウントせずに検出されたことだけを記録する
+                                                if (m.Properties["EventID"].Value.ToString().Equals("1000"))
                                                 {
-                                                    //同じ名前がなければ追加
-                                                    if (code_1000.IndexOf(name_1000) == -1)
+                                                    var name_1000 = m.Properties["Message"].Value.ToString();
+                                                    var name_fast = name_1000.IndexOf("名:") + 2;
+                                                    var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
+                                                    name_1000 = name_1000.Substring(name_fast, name_last);
+                                                    if (code_1000.Count != 0)
                                                     {
-                                                        code_1000.Add(name_1000);
+                                                        //同じ名前がなければ追加
+                                                        if (code_1000.IndexOf(name_1000) == -1)
+                                                        {
+                                                            code_1000.Add(name_1000);
+                                                        }
                                                     }
-                                                }
-                                                else
-                                                    code_1000.Add(name_1000);
+                                                    else
+                                                        code_1000.Add(name_1000);
 
-                                            }
-                                            else if (m.Properties["EventID"].Value.ToString().Equals("0"))
-                                            {
-                                                //ID:0は情報を持たない為，無視する
-                                            }
-                                            else //ID1000番以外の場合，検出回数を記録し，リストに表示する
-                                            {
-                                                string[] row_3 = { m.Properties["EventID"].Value.ToString(),
+                                                }
+                                                else if (m.Properties["EventID"].Value.ToString().Equals("0"))
+                                                {
+                                                    //ID:0は情報を持たない為，無視する
+                                                }
+                                                else //ID1000番以外の場合，検出回数を記録し，リストに表示する
+                                                {
+                                                    string[] row_3 = { m.Properties["EventID"].Value.ToString(),
                                                          m.Properties["Message"].Value.ToString() };
 
-                                                ErrorListView.Items.Add(new ListViewItem(row_3));
-                                                application_ids.Add(m.Properties["EventID"].Value.ToString());
+                                                    ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                    application_ids.Add(m.Properties["EventID"].Value.ToString());
+                                                }
                                             }
+
                                         }
 
                                     }
-
                                 }
                             }
 
@@ -224,10 +237,10 @@ namespace WindowsFormsApplication2
         {
             var text = "最も検出されたErrorID(System):" + MostFrequentlyID_System + "," + counts_system + "回検出されました.\n" +
                 "最も検出されたErrorID(Application):" + MostFrequentlyID_Application + "," + counts + "回検出されました.\n" +
-                "このIDで検索すると，解決のヒントが見つかるかもしれません.";
+                "以上のIDのMessageを参照してみてください.";
             if (code_1000.Count != 0)
             {
-                text += "\nまた，以下のアプリケーションはID:1000番が確認されました.\n" + 
+                text += "\n\nまた，以下のアプリケーションはID:1000番が確認されました.\n" + 
                         "製造元に問い合わせてみてください．\n";
                 foreach (var c in code_1000)
                     text += "・" + c.ToString() + "\n";
