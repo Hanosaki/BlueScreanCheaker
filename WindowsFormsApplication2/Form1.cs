@@ -74,11 +74,9 @@ namespace WindowsFormsApplication2
                                 info.Add("--------(" + time + ")----------");
                                 info.Add("--------ApplicationLog----------");
 
-                                string[] row_1 = { "日時", "--------(" + time + ")----------" };
-                                string[] row_2 = { "LogName", "--------ApplicationLog----------" };
+                                string[] row_1 = { "", "", "--------ApplicationLog----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_1));
-                                ErrorListView.Items.Add(new ListViewItem(row_2));
 
                                 foreach (var m in appLog)
                                 {
@@ -120,7 +118,8 @@ namespace WindowsFormsApplication2
                                                 else //ID1000番以外の場合，検出回数を記録し，リストに表示する
                                                 {
                                                     string[] row_3 = { m.Properties["Id"].Value.ToString(),
-                                                         m.Properties["Message"].Value.ToString() };
+                                                                         m.Properties["TimeCreated"].Value.ToString(),
+                                                                         m.Properties["Message"].Value.ToString() };
 
                                                     ErrorListView.Items.Add(new ListViewItem(row_3));
                                                     application_ids.Add(m.Properties["Id"].Value.ToString());
@@ -134,7 +133,7 @@ namespace WindowsFormsApplication2
 
                                 info.Add("---------SystemLog-----------");
 
-                                string[] row_4 = { "LogName", "---------SystemLog-----------" };
+                                string[] row_4 = { "","", "---------SystemLog-----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_4));
                             }
@@ -155,7 +154,8 @@ namespace WindowsFormsApplication2
                                     + r.Properties["Message"].Value.ToString());
 
                                 string[] row_3 = { r.Properties["Id"].Value.ToString(),
-                                                         r.Properties["Message"].Value.ToString() };
+                                                     r.Properties["TimeCreated"].Value.ToString(),
+                                                     r.Properties["Message"].Value.ToString() };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_3));
                                 system_ids.Add(r.Properties["Id"].Value.ToString());
@@ -274,6 +274,11 @@ namespace WindowsFormsApplication2
             //form3.Height = label.Height + button1.Height;
             //form3.Show();
             MessageBox.Show(text);
+        }
+
+        private void ErrorListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
     }
