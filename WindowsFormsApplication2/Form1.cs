@@ -35,6 +35,7 @@ namespace WindowsFormsApplication2
             var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
 
             string id = "0";
+            string noMessageId = "0";
             string tmpTime = "0";
 
             try
@@ -52,12 +53,18 @@ namespace WindowsFormsApplication2
                     var taskSytem = sr.ReadLine();
                     sr.Close();
 
+                    form2.Update();
+
                     var systemLog = tmp.Invoke(taskSytem, new object[] { });
 
                     form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
                     form2.Update();
 
+                    Console.WriteLine(systemLog.Count);
+
                     var appLog = tmp.Invoke(taskApp, new object[] { });
+                    form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み完了！\n解析中…・";
+                    form2.Update();
 
                     string time = "0";
 
@@ -90,6 +97,7 @@ namespace WindowsFormsApplication2
                                                 !m.Properties["Id"].Value.ToString().Equals("0") &&
                                                 !m.Properties["Id"].Value.ToString().Equals("41"))
                                             {
+                                                noMessageId = m.Properties["Id"].Value.ToString();
                                                 info.Add(m.Properties["Id"].Value.ToString() +
                                                 ","
                                                 + m.Properties["Message"].Value.ToString());
@@ -149,6 +157,7 @@ namespace WindowsFormsApplication2
                                 !r.Properties["Id"].Value.ToString().Equals("4115") &&
                                 !r.Properties["Id"].Value.ToString().Equals("10005"))
                             {
+                                noMessageId = r.Properties["Id"].Value.ToString();
                                 info.Add(r.Properties["Id"].Value.ToString() +
                                     ","
                                     + r.Properties["Message"].Value.ToString());
@@ -162,16 +171,12 @@ namespace WindowsFormsApplication2
 
                             }
                         }
-
-
                     }
-
                 }
-
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message + "id:" + id);
+                MessageBox.Show(e.Message + "\n以下のIDの情報が存在しない可能性あり\nID：" + noMessageId);
             }
 
             char[] removeCharas = new char[] { '\r', '\n' };
@@ -257,7 +262,7 @@ namespace WindowsFormsApplication2
         {
             var text = "システムで最も多かったエラー：\nID：[" + MostFrequentlyID_System + "]\n回数：[" + counts_system + "]回\n\n" +
                        "アプリケーションで最も多かったエラー：\nID：[" + MostFrequentlyID_Application + "]\n回数：[" + counts + "]回\n\n" +
-                       "以上のIDのメッセージを参照してみてください.";
+                       "以上のIDのメッセージを参照してみてください.\n[ Error　ID ]で調べると情報が見つかりやすいです．\n検索例 : [ Error 109 ]";
 
             if (code_1000.Count > 0)
             {
