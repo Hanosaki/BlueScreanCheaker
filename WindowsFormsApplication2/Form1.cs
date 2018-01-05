@@ -180,17 +180,14 @@ namespace WindowsFormsApplication2
                             }
                         }else if(id == "1001")
                         {
+                            bugCheckDay.Add(r.Properties["TimeCreated"].Value.ToString());
                             var code = r.Properties["Message"].Value.ToString();
                             int codeStart = code.IndexOf("0x");
                             int codeLast = code.IndexOf("(") - codeStart;
                             if(codeStart >0 && codeLast > 0)
-                                code = code.Substring(codeStart,codeLast);
+                                stopCode.Add(code.Substring(codeStart,codeLast));
                             else
                                 Console.WriteLine("code-SubStringError");
-                                                       
-                            form3.setList(
-                                r.Properties["TimeCreated"].Value.ToString(),code
-                                );
                         }
                     }
                 }
@@ -262,8 +259,7 @@ namespace WindowsFormsApplication2
 
             ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             form2.Close();
-            form3.Show();
-            form3.Update();
+            callSetList();
 
         }
 
@@ -306,12 +302,25 @@ namespace WindowsFormsApplication2
 
         private void button2_Click(object sender, EventArgs e)
         {
-            try
+            if (form3.IsDisposed)
             {
                 form3 = new Form3();
+                callSetList();
+            }
+        }
+
+        private void callSetList()
+        {
+            try
+            {
+                for (int i = 0; i < bugCheckDay.Count; ++i)
+                {
+                    form3.setList(bugCheckDay[i].ToString(), stopCode[i].ToString());
+                    form3.setDataGrid(bugCheckDay[i].ToString(), stopCode[i].ToString());
+                }
                 form3.Show();
             }
-            catch(Exception errorMessage)
+            catch (Exception errorMessage)
             {
                 MessageBox.Show(errorMessage.ToString());
             }
