@@ -1,1 +1,1 @@
-Get-WinEvent -FilterHashTable @{path = "C:\jikken-System.evtx" }
+Get-WinEvent -FilterHashTable @{path = "C:\jikken-System.evtx";Level=1,2,3 }

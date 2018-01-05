@@ -18,7 +18,11 @@ namespace WindowsFormsApplication2
     {
 
         int counts = 0, MostFrequentlyID_System = 0, MostFrequentlyID_Application = 0, counts_system = 0;
+        ArrayList bugCheckDay, stopCode;
         ArrayList code_1000 = new ArrayList();
+        Form3 form3;
+
+
 
         public Form1()
         {
@@ -27,12 +31,16 @@ namespace WindowsFormsApplication2
             Form2 form2 = new Form2();
             form2.Show();
 
+            form3 = new Form3();
+
             ArrayList info = new ArrayList();
             ArrayList application_ids = new ArrayList();
             ArrayList system_ids = new ArrayList();
+            bugCheckDay = new ArrayList();
+            stopCode = new ArrayList();
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var writer = new StreamWriter(path + "\\timeKP41.csv", false, UTF8Encoding.UTF8);
+            var writer = new StreamWriter(path + "\\tbugChecks.csv", false, UTF8Encoding.UTF8);
 
             string id = "0";
             string noMessageId = "0";
@@ -71,7 +79,7 @@ namespace WindowsFormsApplication2
                     foreach (var r in systemLog)
                     {
                         id = r.Properties["Id"].Value.ToString();
-                        if (id == "41")
+                        if (id == "1001")
                         {
 
                             time = r.Properties["TimeCreated"].Value.ToString().Remove(10);
@@ -149,7 +157,7 @@ namespace WindowsFormsApplication2
 
                         tmpTime = time;
 
-                        if (id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
+                        if (id != "1001" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                         {
                             //ここで，イベントIDとメッセージを受け取る
                             if (!r.Properties["Level"].Value.ToString().Equals("4") &&
@@ -170,6 +178,19 @@ namespace WindowsFormsApplication2
                                 system_ids.Add(r.Properties["Id"].Value.ToString());
 
                             }
+                        }else if(id == "1001")
+                        {
+                            var code = r.Properties["Message"].Value.ToString();
+                            int codeStart = code.IndexOf("0x");
+                            int codeLast = code.IndexOf("(") - codeStart;
+                            if(codeStart >0 && codeLast > 0)
+                                code = code.Substring(codeStart,codeLast);
+                            else
+                                Console.WriteLine("code-SubStringError");
+                                                       
+                            form3.setList(
+                                r.Properties["TimeCreated"].Value.ToString(),code
+                                );
                         }
                     }
                 }
@@ -241,6 +262,8 @@ namespace WindowsFormsApplication2
 
             ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             form2.Close();
+            form3.Show();
+            form3.Update();
 
         }
 
@@ -273,17 +296,25 @@ namespace WindowsFormsApplication2
                     text += "・" + c.ToString() + "\n";
                 }
             }
-            //Form3 form3 = new Form3();
-            //form3.anotation = text;
-            //var label = form3.label;
-            //form3.Height = label.Height + button1.Height;
-            //form3.Show();
             MessageBox.Show(text);
         }
 
         private void ErrorListView_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                form3 = new Form3();
+                form3.Show();
+            }
+            catch(Exception errorMessage)
+            {
+                MessageBox.Show(errorMessage.ToString());
+            }
         }
 
     }
