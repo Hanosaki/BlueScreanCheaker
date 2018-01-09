@@ -22,7 +22,8 @@ namespace WindowsFormsApplication2
         ArrayList code_1000 = new ArrayList();
         Form3 form3;
 
-
+        string taskApp;
+        string taskSystem;
 
         public Form1()
         {
@@ -53,17 +54,11 @@ namespace WindowsFormsApplication2
                 {
                     Label label = testLabel;
 
-                    var sr = new StreamReader(@"sampleApplication.txt", System.Text.Encoding.GetEncoding("shift-jis"));
-                    var taskApp = sr.ReadLine();
-                    sr.Close();
-
-                    sr = new StreamReader(@"sampleSystem.txt", System.Text.Encoding.GetEncoding("shift-jis"));
-                    var taskSytem = sr.ReadLine();
-                    sr.Close();
+                    setTask();                                   
 
                     form2.Update();
 
-                    var systemLog = tmp.Invoke(taskSytem, new object[] { });
+                    var systemLog = tmp.Invoke(taskSystem, new object[] { });
 
                     form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
                     form2.Update();
@@ -89,7 +84,7 @@ namespace WindowsFormsApplication2
                                 info.Add("--------(" + time + ")----------");
                                 info.Add("--------ApplicationLog----------");
 
-                                string[] row_1 = { "", "", "--------ApplicationLog----------" };
+                                string[] row_1 = { "", "("  + time + ")", "--------ApplicationLog----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_1));
 
@@ -149,7 +144,7 @@ namespace WindowsFormsApplication2
 
                                 info.Add("---------SystemLog-----------");
 
-                                string[] row_4 = { "","", "---------SystemLog-----------" };
+                                string[] row_4 = { "", "(" + time + ")", "---------SystemLog-----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_4));
                             }
@@ -157,7 +152,7 @@ namespace WindowsFormsApplication2
 
                         tmpTime = time;
 
-                        if (id != "1001" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
+                        if (id != "1001" && id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                         {
                             //ここで，イベントIDとメッセージを受け取る
                             if (!r.Properties["Level"].Value.ToString().Equals("4") &&
@@ -263,6 +258,18 @@ namespace WindowsFormsApplication2
 
         }
 
+        private void setTask()
+        {
+            var sr = new StreamReader(@"sampleApplication.txt", System.Text.Encoding.GetEncoding("shift-jis"));
+            taskApp = sr.ReadLine();
+            sr.Close();
+            sr = new StreamReader(@"sampleSystem.txt", System.Text.Encoding.GetEncoding("shift-jis"));
+            taskSystem = sr.ReadLine();
+            sr.Close();
+
+        }
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
         }
@@ -324,6 +331,17 @@ namespace WindowsFormsApplication2
             {
                 MessageBox.Show(errorMessage.ToString());
             }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        public void setTask(string app,string sys)
+        {
+            taskApp = app;
+            taskSystem = sys;
         }
 
     }

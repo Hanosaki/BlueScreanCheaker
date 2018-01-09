@@ -2,6 +2,7 @@
 {
     partial class Form1
     {
+
         /// <summary>
         /// 必要なデザイナー変数です。
         /// </summary>
@@ -40,10 +41,9 @@
             // testLabel
             // 
             this.testLabel.AutoSize = true;
-            this.testLabel.Location = new System.Drawing.Point(26, 66);
-            this.testLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.testLabel.Location = new System.Drawing.Point(12, 33);
             this.testLabel.Name = "testLabel";
-            this.testLabel.Size = new System.Drawing.Size(67, 24);
+            this.testLabel.Size = new System.Drawing.Size(35, 12);
             this.testLabel.TabIndex = 0;
             this.testLabel.Text = "label1";
             // 
@@ -58,10 +58,9 @@
             this.columnHeader2,
             this.columnHeader3});
             this.ErrorListView.LabelEdit = true;
-            this.ErrorListView.Location = new System.Drawing.Point(0, 58);
-            this.ErrorListView.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.ErrorListView.Location = new System.Drawing.Point(0, 29);
             this.ErrorListView.Name = "ErrorListView";
-            this.ErrorListView.Size = new System.Drawing.Size(964, 460);
+            this.ErrorListView.Size = new System.Drawing.Size(447, 232);
             this.ErrorListView.TabIndex = 1;
             this.ErrorListView.UseCompatibleStateImageBehavior = false;
             this.ErrorListView.View = System.Windows.Forms.View.Details;
@@ -74,6 +73,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Time";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // columnHeader3
             // 
@@ -82,10 +82,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(30, 3);
-            this.button1.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.button1.Location = new System.Drawing.Point(14, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(212, 46);
+            this.button1.Size = new System.Drawing.Size(98, 23);
             this.button1.TabIndex = 2;
             this.button1.Text = "通知再表示";
             this.button1.UseVisualStyleBackColor = true;
@@ -93,9 +92,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(275, 3);
+            this.button2.Location = new System.Drawing.Point(127, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(212, 46);
+            this.button2.Size = new System.Drawing.Size(98, 23);
             this.button2.TabIndex = 3;
             this.button2.Text = "ストップコード表示";
             this.button2.UseVisualStyleBackColor = true;
@@ -103,17 +103,17 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(966, 522);
+            this.ClientSize = new System.Drawing.Size(446, 261);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.ErrorListView);
             this.Controls.Add(this.testLabel);
-            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "Form1";
             this.Text = "ブルースクリーン発生日のエラー&警告リスト";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.ResumeLayout(false);
