@@ -402,8 +402,11 @@ namespace WindowsFormsApplication2
         private void button3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("アプリがクラッシュした際に呼び出されていたシステムです．\n" +
-                "ストップコードと併せて調べることで，解決の糸口になるかもしれません．",
-                "ストップコードって？",
+                "ストップコードと併せて調べることで，解決の糸口になるかもしれません．\n" +
+                "・頻繁にクラッシュしているアプリケーションの再インストール\n" + 
+                "・頻繁にクラッシュしているdllの修復\n" +
+                "以上のことを試してみると，症状が改善する場合があります．",
+                "モジュールって？",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
