@@ -24,6 +24,8 @@ namespace WindowsFormsApplication2
                 System.Windows.Forms.DragEventHandler(this.listBox1_DragDrop);
             this.listBox1.DragEnter += new 
                 System.Windows.Forms.DragEventHandler(this.listBox1_DragEnter);
+            label3.Text = "エラー以外に欲しい情報がある場合は選択してください(※左から順に重要度が下がります)"
+             + "\nよく分からない場合はそのまま下のボタンを押してください";
 
         }
 
@@ -46,6 +48,7 @@ namespace WindowsFormsApplication2
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             listBox1.SetSelected(0, true);
             string appLog = listBox1.SelectedItem.ToString();
             listBox2.SetSelected(0, true);
@@ -57,6 +60,13 @@ namespace WindowsFormsApplication2
             sr = new StreamReader(@"command2.txt", System.Text.Encoding.GetEncoding("shift-jis"));
             var after = sr.ReadLine();
             sr.Close();
+
+            if (seriousBox.Checked)
+                after += ",1";
+            if (warningBox.Checked)
+                after += ",3";
+
+            after += "}";
 
             appTask = before + appLog + after;
             systemTask = before + systemLog + after;
@@ -70,7 +80,6 @@ namespace WindowsFormsApplication2
 
             Form1 form1 = new Form1();
             form1.Show();
-
         }
 
         private void listBox2_DragEnter(object sender, DragEventArgs e)

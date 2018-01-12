@@ -84,7 +84,7 @@ namespace WindowsFormsApplication2
                                 info.Add("--------(" + time + ")----------");
                                 info.Add("--------ApplicationLog----------");
 
-                                string[] row_1 = { "", "("  + time + ")", "--------ApplicationLog----------" };
+                                string[] row_1 = {"", "", "("  + time + ")", "--------ApplicationLog----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_1));
 
@@ -96,10 +96,14 @@ namespace WindowsFormsApplication2
                                         if (!m.Properties["Level"].Value.ToString().Equals("4"))
                                         {
 
-                                            if (!m.Properties["Level"].Value.ToString().Equals("0") &&
+                                            var level = m.Properties["Level"].Value.ToString();
+                                            var appTime = m.Properties["TimeCreated"].Value.ToString();
+
+                                            if (!level.Equals("0") &&
                                                 !m.Properties["Id"].Value.ToString().Equals("0") &&
                                                 !m.Properties["Id"].Value.ToString().Equals("41"))
                                             {
+                                                level = setlevel(level);
                                                 noMessageId = m.Properties["Id"].Value.ToString();
                                                 info.Add(m.Properties["Id"].Value.ToString() +
                                                 ","
@@ -114,21 +118,55 @@ namespace WindowsFormsApplication2
                                                     if (name_last < 0)
                                                         name_last = name_1000.IndexOf(".EXE") - (name_fast - 4);
                                                     name_1000 = name_1000.Substring(name_fast, name_last);
+
+                                                    var dll_1000 = m.Properties["Message"].Value.ToString();
+                                                    var dll_first = dll_1000.IndexOf("モジュール名:") + 7;
+                                                    var dll_end = dll_1000.IndexOf("dll") + 3 - dll_first;
+                                                    if(dll_end < 0)
+                                                        dll_end = dll_1000.IndexOf("DLL") + 3 - dll_first;
+                                                    if (dll_end < 0)
+                                                        dll_end = dll_1000.IndexOf(name_1000) + name_1000.Length
+                                                            - dll_first;
+
+                                                    if (dll_end > 0)
+                                                    {
+                                                        dll_1000 = dll_1000.Substring(dll_first, dll_end);
+                                                        string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
+                                                                         m.Properties["TimeCreated"].Value.ToString(),
+                                                                         "クラッシュしたアプリ名:" + name_1000 + 
+                                                                         " ,障害モジュール名：" + dll_1000};
+                                                        ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                    }
+                                                    else
+                                                    {
+                                                        string[] row_3 = { level,
+                                                                         m.Properties["Id"].Value.ToString(),
+                                                                         m.Properties["TimeCreated"].Value.ToString(),
+                                                                         "クラッシュしたアプリ名:" + name_1000 + 
+                                                                         " ,障害モジュール名：不明 "};
+                                                        ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                    }
+                                                    
+                                                    
+
                                                     if (code_1000.Count != 0)
                                                     {
                                                         //同じ名前がなければ追加
-                                                        if (code_1000.IndexOf(name_1000) == -1)
+                                                        if (dll_end > 0)
                                                         {
-                                                            code_1000.Add(name_1000);
+                                                            if (code_1000.IndexOf(name_1000 + "," + dll_1000) == -1)
+                                                            {
+                                                                code_1000.Add(name_1000 + "," + dll_1000) ;
+                                                            }
                                                         }
                                                     }
-                                                    else
-                                                        code_1000.Add(name_1000);
+                                                    else if(dll_end > 0)
+                                                        code_1000.Add(name_1000 + "," + dll_1000 );
 
                                                 }
                                                 else //ID1000番以外の場合，検出回数を記録し，リストに表示する
                                                 {
-                                                    string[] row_3 = { m.Properties["Id"].Value.ToString(),
+                                                    string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
                                                                          m.Properties["Message"].Value.ToString() };
 
@@ -144,7 +182,7 @@ namespace WindowsFormsApplication2
 
                                 info.Add("---------SystemLog-----------");
 
-                                string[] row_4 = { "", "(" + time + ")", "---------SystemLog-----------" };
+                                string[] row_4 = { "","", "(" + time + ")", "---------SystemLog-----------" };
 
                                 ErrorListView.Items.Add(new ListViewItem(row_4));
                             }
@@ -154,18 +192,20 @@ namespace WindowsFormsApplication2
 
                         if (id != "1001" && id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                         {
+                            var level = r.Properties["Level"].Value.ToString();
                             //ここで，イベントIDとメッセージを受け取る
-                            if (!r.Properties["Level"].Value.ToString().Equals("4") &&
+                            if (!level.Equals("4") &&
                                 !r.Properties["Id"].Value.ToString().Equals("6") &&
                                 !r.Properties["Id"].Value.ToString().Equals("4115") &&
                                 !r.Properties["Id"].Value.ToString().Equals("10005"))
                             {
+                                level = setlevel(level);
                                 noMessageId = r.Properties["Id"].Value.ToString();
                                 info.Add(r.Properties["Id"].Value.ToString() +
                                     ","
                                     + r.Properties["Message"].Value.ToString());
 
-                                string[] row_3 = { r.Properties["Id"].Value.ToString(),
+                                string[] row_3 = {level , r.Properties["Id"].Value.ToString(),
                                                      r.Properties["TimeCreated"].Value.ToString(),
                                                      r.Properties["Message"].Value.ToString() };
 
@@ -276,7 +316,6 @@ namespace WindowsFormsApplication2
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            setText();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -293,13 +332,19 @@ namespace WindowsFormsApplication2
             if (code_1000.Count > 0)
             {
 
-                text += "\n\nまた，以下のアプリケーションはID：1000番が検出されました．\nID：1000番はクラッシュしたという記録情報です． \n製造元に問い合わせてみてください．\n";
+                text += "\n\nまた，以下のアプリケーションはクラッシュ情報及びモジュール名が確認できました．"+
+                    "\n(アプリケーション名，障害発生モジュール名)\n";
                 foreach (var c in code_1000)
                 {
                     text += "・" + c.ToString() + "\n";
                 }
+                text += "ストップコードの検索情報と照らし合わせてみると，解決手掛かりになるかもしれません．";
             }
-            MessageBox.Show(text);
+            MessageBox.Show(text,"最も検出されたID",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1,
+                MessageBoxOptions.DefaultDesktopOnly);
         }
 
         private void ErrorListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -342,6 +387,25 @@ namespace WindowsFormsApplication2
         {
             taskApp = app;
             taskSystem = sys;
+        }
+
+        private string setlevel( string level)
+        {
+            if (level.Equals("1"))
+                return "重大";
+            else if (level.Equals("2"))
+                return "エラー";
+            else
+                return "警告";
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("アプリがクラッシュした際に呼び出されていたシステムです．\n" +
+                "ストップコードと併せて調べることで，解決の糸口になるかもしれません．",
+                "ストップコードって？",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
     }
