@@ -31,13 +31,14 @@
         {
             this.testLabel = new System.Windows.Forms.Label();
             this.ErrorListView = new System.Windows.Forms.ListView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // testLabel
@@ -51,6 +52,7 @@
             // 
             // ErrorListView
             // 
+            this.ErrorListView.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.ErrorListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -60,14 +62,31 @@
             this.columnHeader6,
             this.columnHeader7,
             this.columnHeader8});
-            this.ErrorListView.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ErrorListView.FullRowSelect = true;
+            this.ErrorListView.ImeMode = System.Windows.Forms.ImeMode.On;
             this.ErrorListView.Location = new System.Drawing.Point(0, 29);
             this.ErrorListView.Name = "ErrorListView";
-            this.ErrorListView.Size = new System.Drawing.Size(447, 232);
+            this.ErrorListView.Size = new System.Drawing.Size(1052, 585);
             this.ErrorListView.TabIndex = 1;
             this.ErrorListView.UseCompatibleStateImageBehavior = false;
             this.ErrorListView.View = System.Windows.Forms.View.Details;
-            this.ErrorListView.SelectedIndexChanged += new System.EventHandler(this.ErrorListView_SelectedIndexChanged);
+            this.ErrorListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ErrorListView_MouseDoubleClick);
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Level";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "ID";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Time";
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Message";
             // 
             // button1
             // 
@@ -101,27 +120,22 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // columnHeader5
+            // label1
             // 
-            this.columnHeader5.Text = "Level";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "ID";
-            // 
-            // columnHeader7
-            // 
-            this.columnHeader7.Text = "Time";
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "Message";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label1.Location = new System.Drawing.Point(368, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(382, 16);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "ダブルクリックでメッセージを個別に表示します";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(446, 261);
+            this.ClientSize = new System.Drawing.Size(1051, 614);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -149,6 +163,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.Label label1;
     }
 }
 

@@ -25,6 +25,8 @@ namespace WindowsFormsApplication2
         string taskApp;
         string taskSystem;
 
+        int nowItem;
+
         public Form1()
         {
             InitializeComponent();
@@ -40,8 +42,8 @@ namespace WindowsFormsApplication2
             bugCheckDay = new ArrayList();
             stopCode = new ArrayList();
 
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var writer = new StreamWriter(path + "\\tbugChecks.csv", false, UTF8Encoding.UTF8);
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //var writer = new StreamWriter(path + "\\tbugChecks.csv", false, UTF8Encoding.UTF8);
 
             string id = "0";
             string noMessageId = "0";
@@ -62,8 +64,6 @@ namespace WindowsFormsApplication2
 
                     form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
                     form2.Update();
-
-                    Console.WriteLine(systemLog.Count);
 
                     var appLog = tmp.Invoke(taskApp, new object[] { });
                     form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み完了！\n解析中…・";
@@ -233,22 +233,22 @@ namespace WindowsFormsApplication2
             }
 
             char[] removeCharas = new char[] { '\r', '\n' };
-            string[] str = new string[info.Count];
-            writer.WriteLine("EventID,Message");
-            int count = 0;
-            foreach (var i in info)
-            {
-                str[count] = i.ToString();
-                ++count;
-            }
+            //string[] str = new string[info.Count];
+            //writer.WriteLine("EventID,Message");
+            //int count = 0;
+            //foreach (var i in info)
+            //{
+            //    str[count] = i.ToString();
+            //    ++count;
+            //}
 
-            for (int i = 0; i < str.Length; ++i)
-            {
-                foreach (char c in removeCharas)
-                    str[i] = str[i].Replace(c.ToString(), "");
-                writer.WriteLine(str[i]);
-            }
-            writer.Close();
+            //for (int i = 0; i < str.Length; ++i)
+            //{
+            //    foreach (char c in removeCharas)
+            //        str[i] = str[i].Replace(c.ToString(), "");
+            //    writer.WriteLine(str[i]);
+            //}
+            //writer.Close();
 
             while (application_ids.Count != 0)
             {
@@ -295,6 +295,7 @@ namespace WindowsFormsApplication2
             ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             form2.Close();
             callSetList();
+            nowItem = 0;
 
         }
 
@@ -345,11 +346,6 @@ namespace WindowsFormsApplication2
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1,
                 MessageBoxOptions.DefaultDesktopOnly);
-        }
-
-        private void ErrorListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -409,6 +405,18 @@ namespace WindowsFormsApplication2
                 "モジュールって？",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void ErrorListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (ErrorListView.SelectedItems.Count > 0)
+            {
+                var message = ErrorListView.SelectedItems[0].SubItems[3].Text;
+                MessageBox.Show(message,
+                    "ID:" + ErrorListView.SelectedItems[0].SubItems[1].Text,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
 
     }
