@@ -44,9 +44,10 @@
             // testLabel
             // 
             this.testLabel.AutoSize = true;
-            this.testLabel.Location = new System.Drawing.Point(12, 33);
+            this.testLabel.Location = new System.Drawing.Point(26, 66);
+            this.testLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.testLabel.Name = "testLabel";
-            this.testLabel.Size = new System.Drawing.Size(35, 12);
+            this.testLabel.Size = new System.Drawing.Size(67, 24);
             this.testLabel.TabIndex = 0;
             this.testLabel.Text = "label1";
             // 
@@ -64,9 +65,10 @@
             this.columnHeader8});
             this.ErrorListView.FullRowSelect = true;
             this.ErrorListView.ImeMode = System.Windows.Forms.ImeMode.On;
-            this.ErrorListView.Location = new System.Drawing.Point(0, 29);
+            this.ErrorListView.Location = new System.Drawing.Point(0, 58);
+            this.ErrorListView.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.ErrorListView.Name = "ErrorListView";
-            this.ErrorListView.Size = new System.Drawing.Size(1052, 585);
+            this.ErrorListView.Size = new System.Drawing.Size(2275, 1166);
             this.ErrorListView.TabIndex = 1;
             this.ErrorListView.UseCompatibleStateImageBehavior = false;
             this.ErrorListView.View = System.Windows.Forms.View.Details;
@@ -90,9 +92,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(14, 2);
+            this.button1.Location = new System.Drawing.Point(30, 4);
+            this.button1.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(98, 23);
+            this.button1.Size = new System.Drawing.Size(212, 46);
             this.button1.TabIndex = 2;
             this.button1.Text = "頻出エラー情報";
             this.button1.UseVisualStyleBackColor = true;
@@ -100,10 +103,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(127, 2);
-            this.button2.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
+            this.button2.Location = new System.Drawing.Point(275, 4);
+            this.button2.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(98, 23);
+            this.button2.Size = new System.Drawing.Size(212, 46);
             this.button2.TabIndex = 3;
             this.button2.Text = "ストップコード表示";
             this.button2.UseVisualStyleBackColor = true;
@@ -111,10 +114,10 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(238, 2);
-            this.button3.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
+            this.button3.Location = new System.Drawing.Point(516, 4);
+            this.button3.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(113, 23);
+            this.button3.Size = new System.Drawing.Size(245, 46);
             this.button3.TabIndex = 4;
             this.button3.Text = "モジュール名って？";
             this.button3.UseVisualStyleBackColor = true;
@@ -124,23 +127,26 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("ＭＳ ゴシック", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(368, 7);
+            this.label1.Location = new System.Drawing.Point(797, 14);
+            this.label1.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(382, 16);
+            this.label1.Size = new System.Drawing.Size(675, 33);
             this.label1.TabIndex = 5;
-            this.label1.Text = "ダブルクリックでメッセージを個別に表示します";
+            this.label1.Text = "ダブルクリックでコピー用ウィンドウを表示";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1051, 614);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.ClientSize = new System.Drawing.Size(2277, 1228);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.ErrorListView);
             this.Controls.Add(this.testLabel);
+            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "Form1";
             this.Text = "ブルースクリーン発生日のエラー&警告リスト";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
