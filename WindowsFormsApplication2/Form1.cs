@@ -133,8 +133,8 @@ namespace WindowsFormsApplication2
                                                         dll_1000 = dll_1000.Substring(dll_first, dll_end);
                                                         string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
-                                                                         "クラッシュしたアプリ名:" + name_1000 + 
-                                                                         " ,障害モジュール名：" + dll_1000};
+                                                                         "クラッシュしたアプリは[" + name_1000 + 
+                                                                         " ]です。障害モジュール名は[" + dll_1000 + "]です。"};
                                                         ErrorListView.Items.Add(new ListViewItem(row_3));
                                                     }
                                                     else
@@ -142,8 +142,8 @@ namespace WindowsFormsApplication2
                                                         string[] row_3 = { level,
                                                                          m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
-                                                                         "クラッシュしたアプリ名:" + name_1000 + 
-                                                                         " ,障害モジュール名：不明 "};
+                                                                         "クラッシュしたアプリは[" + name_1000 + 
+                                                                         "]です 。障害モジュール名は不明です。 "};
                                                         ErrorListView.Items.Add(new ListViewItem(row_3));
                                                     }
                                                     
@@ -341,11 +341,12 @@ namespace WindowsFormsApplication2
                 }
                 text += "ストップコードの検索情報と照らし合わせてみると，解決手掛かりになるかもしれません．";
             }
-            MessageBox.Show(text,"最も検出されたID",
+            MessageBox.Show(text, "最も検出されたID",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information,
                 MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.DefaultDesktopOnly);
+                MessageBoxOptions.DefaultDesktopOnly);           
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -412,10 +413,11 @@ namespace WindowsFormsApplication2
             if (ErrorListView.SelectedItems.Count > 0)
             {
                 var message = ErrorListView.SelectedItems[0].SubItems[3].Text;
-                MessageBox.Show(message,
-                    "ID:" + ErrorListView.SelectedItems[0].SubItems[1].Text,
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                var form5 = new Form5();
+                form5.LABEL1.Text = message;
+                form5.Text = "ID:" + ErrorListView.SelectedItems[0].SubItems[1].Text;
+                form5.Show();
+                form5.Activate();
             }
         }
 
