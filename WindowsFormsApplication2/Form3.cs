@@ -83,9 +83,14 @@ namespace WindowsFormsApplication2
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            showMessage();
+        }
+
+        public void showMessage()
+        {
             MessageBox.Show("ブルースクリーン発生時にWindowsが認識したエラーの名前です．(16進数表記)\n" +
                 "検索して意味を調べることで，解決の手掛かりが見つかる場合があります．\n" +
-                "直前の時間にクラッシュしたアプリケーション等の情報も調べてみると良いかもしれません．",
+                "また，リストからストップコード発生時間の前後１時間を目安に調べてみると原因の特定が楽になる場合があります．",
                 "ストップコードって？",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);

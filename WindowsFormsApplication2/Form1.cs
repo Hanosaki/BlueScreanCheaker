@@ -233,22 +233,6 @@ namespace WindowsFormsApplication2
             }
 
             char[] removeCharas = new char[] { '\r', '\n' };
-            //string[] str = new string[info.Count];
-            //writer.WriteLine("EventID,Message");
-            //int count = 0;
-            //foreach (var i in info)
-            //{
-            //    str[count] = i.ToString();
-            //    ++count;
-            //}
-
-            //for (int i = 0; i < str.Length; ++i)
-            //{
-            //    foreach (char c in removeCharas)
-            //        str[i] = str[i].Replace(c.ToString(), "");
-            //    writer.WriteLine(str[i]);
-            //}
-            //writer.Close();
 
             while (application_ids.Count != 0)
             {
@@ -317,6 +301,7 @@ namespace WindowsFormsApplication2
 
         private void Form1_Shown(object sender, EventArgs e)
         {
+            form3.showMessage();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -413,6 +398,8 @@ namespace WindowsFormsApplication2
             if (ErrorListView.SelectedItems.Count > 0)
             {
                 var message = ErrorListView.SelectedItems[0].SubItems[3].Text;
+                if (message.LastIndexOf("。") != message.Length-1)
+                    message += "。";
                 var form5 = new Form5();
                 form5.LABEL1.Text = message;
                 form5.Text = "ID:" + ErrorListView.SelectedItems[0].SubItems[1].Text;
