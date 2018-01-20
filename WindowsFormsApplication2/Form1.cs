@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Collections;
 using System.IO;
 using System.Management.Automation.Runspaces;
+using System.Collections.ObjectModel;
 
 namespace WindowsFormsApplication2
 {
@@ -24,8 +25,6 @@ namespace WindowsFormsApplication2
 
         string taskApp;
         string taskSystem;
-
-        int nowItem;
 
         public Form1()
         {
@@ -49,188 +48,256 @@ namespace WindowsFormsApplication2
             string noMessageId = "0";
             string tmpTime = "0";
 
-            try
+            ArrayList noAppIDs = new ArrayList();
+            ArrayList noSysIDs = new ArrayList();
+
+            bool flag = true;
+            bool logApp = false;
+            bool loadComp = false;
+
+            Collection<PSObject> systemLog = new Collection<PSObject>();
+            Collection<PSObject> appLog = new Collection<PSObject>();
+
+            do
             {
-
-                using (var tmp = new RunspaceInvoke())
+                try
                 {
-                    Label label = testLabel;
 
-                    setTask();                                   
-
-                    form2.Update();
-
-                    var systemLog = tmp.Invoke(taskSystem, new object[] { });
-
-                    form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
-                    form2.Update();
-
-                    var appLog = tmp.Invoke(taskApp, new object[] { });
-                    form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み完了！\n解析中…・";
-                    form2.Update();
-
-                    string time = "0";
-
-                    foreach (var r in systemLog)
+                    using (var tmp = new RunspaceInvoke())
                     {
-                        id = r.Properties["Id"].Value.ToString();
-                        if (id == "1001")
+                        Label label = testLabel;
+
+                        setTask();
+
+                        form2.Update();
+
+                        if (!loadComp)
                         {
 
-                            time = r.Properties["TimeCreated"].Value.ToString().Remove(10);
+                            systemLog = tmp.Invoke(taskSystem, new object[] { });
 
-                            if (time != tmpTime)
+                            form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み中・・・";
+                            form2.Update();
+
+                            appLog = tmp.Invoke(taskApp, new object[] { });
+                            form2.label = "SystemLog読み込み完了！\nApplicationLog読み込み完了！\n解析中…・";
+                            form2.Update();
+
+                            loadComp = true;
+
+                        }
+
+                        string time = "0";
+
+                        foreach (var r in systemLog)
+                        {
+
+                            id = r.Properties["Id"].Value.ToString();
+                            bool noIDsNotHit = true;
+                            
+                            if (id == "1001")
                             {
-                                info.Add("--------(" + time + ")----------");
-                                info.Add("--------ApplicationLog----------");
 
-                                string[] row_1 = {"", "", "("  + time + ")", "--------ApplicationLog----------" };
+                                time = r.Properties["TimeCreated"].Value.ToString().Remove(10);
 
-                                ErrorListView.Items.Add(new ListViewItem(row_1));
-
-                                foreach (var m in appLog)
+                                if (time != tmpTime)
                                 {
-                                    if (m.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
+                                    info.Add("--------(" + time + ")----------");
+                                    info.Add("--------ApplicationLog----------");
+
+                                    string[] row_1 = { "", "", "(" + time + ")", "--------ApplicationLog----------" };
+
+                                    ErrorListView.Items.Add(new ListViewItem(row_1));
+
+                                    #region アプリケーションログ解析処理
+
+                                    foreach (var m in appLog)
                                     {
-                                        //同じ時間が見つかった場合の処理
-                                        if (!m.Properties["Level"].Value.ToString().Equals("4"))
+                                        if (m.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                                         {
-
-                                            var level = m.Properties["Level"].Value.ToString();
-                                            var appTime = m.Properties["TimeCreated"].Value.ToString();
-
-                                            if (!level.Equals("0") &&
-                                                !m.Properties["Id"].Value.ToString().Equals("0") &&
-                                                !m.Properties["Id"].Value.ToString().Equals("41"))
+                                            if (!logApp)
+                                                logApp = true;
+                                                                                        
+                                            //同じ時間が見つかった場合の処理
+                                            if (!m.Properties["Level"].Value.ToString().Equals("4"))//Levelチェック
                                             {
-                                                level = setlevel(level);
-                                                noMessageId = m.Properties["Id"].Value.ToString();
-                                                info.Add(m.Properties["Id"].Value.ToString() +
-                                                ","
-                                                + m.Properties["Message"].Value.ToString());
 
-                                                //ID:1000番はカウントせずに検出されたことだけを記録する
-                                                if (m.Properties["Id"].Value.ToString().Equals("1000"))
+                                                var level = m.Properties["Level"].Value.ToString();
+                                                var appTime = m.Properties["TimeCreated"].Value.ToString();
+
+                                                foreach (var noID in noAppIDs)
                                                 {
-                                                    var name_1000 = m.Properties["Message"].Value.ToString();
-                                                    var name_fast = name_1000.IndexOf("名:") + 2;
-                                                    var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
-                                                    if (name_last < 0)
-                                                        name_last = name_1000.IndexOf(".EXE") - (name_fast - 4);
-                                                    name_1000 = name_1000.Substring(name_fast, name_last);
+                                                    if ((string)noID == m.Properties["Id"].Value.ToString())
+                                                        noIDsNotHit = false;
+                                                }
 
-                                                    var dll_1000 = m.Properties["Message"].Value.ToString();
-                                                    var dll_first = dll_1000.IndexOf("モジュール名:") + 7;
-                                                    var dll_end = dll_1000.IndexOf("dll") + 3 - dll_first;
-                                                    if(dll_end < 0)
-                                                        dll_end = dll_1000.IndexOf("DLL") + 3 - dll_first;
-                                                    if (dll_end < 0)
-                                                        dll_end = dll_1000.IndexOf(name_1000) + name_1000.Length
-                                                            - dll_first;
+                                                if (!level.Equals("0") &&
+                                                    !m.Properties["Id"].Value.ToString().Equals("41") &&
+                                                    noIDsNotHit)
+                                                {
+                                                    level = setlevel(level);
+                                                    noMessageId = m.Properties["Id"].Value.ToString();
+                                                    info.Add(m.Properties["Id"].Value.ToString() +
+                                                    ","
+                                                    + m.Properties["Message"].Value.ToString());
 
-                                                    if (dll_end > 0)
+                                                    //ID:1000番はカウントせずに検出されたことだけを記録する
+                                                    if (m.Properties["Id"].Value.ToString().Equals("1000"))
                                                     {
-                                                        dll_1000 = dll_1000.Substring(dll_first, dll_end);
-                                                        string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
+                                                        var name_1000 = m.Properties["Message"].Value.ToString();
+                                                        var name_fast = name_1000.IndexOf("名:") + 2;
+                                                        var name_last = name_1000.IndexOf(".exe") - (name_fast - 4);
+                                                        if (name_last < 0)
+                                                            name_last = name_1000.IndexOf(".EXE") - (name_fast - 4);
+                                                        name_1000 = name_1000.Substring(name_fast, name_last);
+
+                                                        var dll_1000 = m.Properties["Message"].Value.ToString();
+                                                        var dll_first = dll_1000.IndexOf("モジュール名:") + 7;
+                                                        var dll_end = dll_1000.IndexOf("dll") + 3 - dll_first;
+                                                        if (dll_end < 0)
+                                                            dll_end = dll_1000.IndexOf("DLL") + 3 - dll_first;
+                                                        if (dll_end < 0)
+                                                            dll_end = dll_1000.IndexOf(name_1000) + name_1000.Length
+                                                                - dll_first;
+
+                                                        if (dll_end > 0)
+                                                        {
+                                                            dll_1000 = dll_1000.Substring(dll_first, dll_end);
+                                                            string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
                                                                          "クラッシュしたアプリは[" + name_1000 + 
                                                                          " ]です。障害モジュール名は[" + dll_1000 + "]です。"};
-                                                        ErrorListView.Items.Add(new ListViewItem(row_3));
-                                                    }
-                                                    else
-                                                    {
-                                                        string[] row_3 = { level,
+                                                            ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                        }
+                                                        else
+                                                        {
+                                                            string[] row_3 = { level,
                                                                          m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
                                                                          "クラッシュしたアプリは[" + name_1000 + 
                                                                          "]です 。障害モジュール名は不明です。 "};
-                                                        ErrorListView.Items.Add(new ListViewItem(row_3));
-                                                    }
-                                                    
-                                                    
+                                                            ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                        }
 
-                                                    if (code_1000.Count != 0)
-                                                    {
-                                                        //同じ名前がなければ追加
-                                                        if (dll_end > 0)
+
+
+                                                        if (code_1000.Count != 0)
                                                         {
-                                                            if (code_1000.IndexOf(name_1000 + "," + dll_1000) == -1)
+                                                            //同じ名前がなければ追加
+                                                            if (dll_end > 0)
                                                             {
-                                                                code_1000.Add(name_1000 + "," + dll_1000) ;
+                                                                if (code_1000.IndexOf(name_1000 + "," + dll_1000) == -1)
+                                                                {
+                                                                    code_1000.Add(name_1000 + "," + dll_1000);
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                    else if(dll_end > 0)
-                                                        code_1000.Add(name_1000 + "," + dll_1000 );
+                                                        else if (dll_end > 0)
+                                                            code_1000.Add(name_1000 + "," + dll_1000);
 
-                                                }
-                                                else //ID1000番以外の場合，検出回数を記録し，リストに表示する
-                                                {
-                                                    string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
+                                                    }
+                                                    else //ID1000番以外の場合，検出回数を記録し，リストに表示する
+                                                    {
+                                                        string[] row_3 = { level, m.Properties["Id"].Value.ToString(),
                                                                          m.Properties["TimeCreated"].Value.ToString(),
                                                                          m.Properties["Message"].Value.ToString() };
 
-                                                    ErrorListView.Items.Add(new ListViewItem(row_3));
-                                                    application_ids.Add(m.Properties["Id"].Value.ToString());
+                                                        ErrorListView.Items.Add(new ListViewItem(row_3));
+                                                        application_ids.Add(m.Properties["Id"].Value.ToString());
+                                                    }
                                                 }
+
                                             }
 
                                         }
-
                                     }
+
+                                    #endregion
+
+                                    info.Add("---------SystemLog-----------");
+
+                                    string[] row_4 = { "", "", "(" + time + ")", "---------SystemLog-----------" };
+
+                                    ErrorListView.Items.Add(new ListViewItem(row_4));
                                 }
-
-                                info.Add("---------SystemLog-----------");
-
-                                string[] row_4 = { "","", "(" + time + ")", "---------SystemLog-----------" };
-
-                                ErrorListView.Items.Add(new ListViewItem(row_4));
                             }
-                        }
 
-                        tmpTime = time;
+                            tmpTime = time;
 
-                        if (id != "1001" && id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
-                        {
-                            var level = r.Properties["Level"].Value.ToString();
-                            //ここで，イベントIDとメッセージを受け取る
-                            if (!level.Equals("4") &&
-                                !r.Properties["Id"].Value.ToString().Equals("6") &&
-                                !r.Properties["Id"].Value.ToString().Equals("4115") &&
-                                !r.Properties["Id"].Value.ToString().Equals("10005"))
+                            #region システムログ解析処理
+
+                            if (id != "1001" && id != "41" && r.Properties["TimeCreated"].Value.ToString().Remove(10) == time)
                             {
-                                level = setlevel(level);
-                                noMessageId = r.Properties["Id"].Value.ToString();
-                                info.Add(r.Properties["Id"].Value.ToString() +
-                                    ","
-                                    + r.Properties["Message"].Value.ToString());
+                                if (logApp)
+                                    logApp = false;
 
-                                string[] row_3 = {level , r.Properties["Id"].Value.ToString(),
+                                var level = r.Properties["Level"].Value.ToString();
+                                //ここで，イベントIDとメッセージを受け取る
+                                if (!level.Equals("4")) // レベル設定
+                                {
+
+                                    foreach (var noID in noSysIDs)
+                                    {
+                                        if ((string)noID == r.Properties["Id"].Value.ToString())
+                                            noIDsNotHit = false;
+                                    }
+                                    if (noIDsNotHit)
+                                    {
+                                        level = setlevel(level);
+                                        noMessageId = r.Properties["Id"].Value.ToString();
+                                        info.Add(r.Properties["Id"].Value.ToString() +
+                                            ","
+                                            + r.Properties["Message"].Value.ToString());
+
+                                        string[] row_3 = {level , r.Properties["Id"].Value.ToString(),
                                                      r.Properties["TimeCreated"].Value.ToString(),
                                                      r.Properties["Message"].Value.ToString() };
 
-                                ErrorListView.Items.Add(new ListViewItem(row_3));
-                                system_ids.Add(r.Properties["Id"].Value.ToString());
+                                        ErrorListView.Items.Add(new ListViewItem(row_3));
+                                        system_ids.Add(r.Properties["Id"].Value.ToString());
+                                    }
 
+                                }
                             }
-                        }else if(id == "1001")
-                        {
-                            bugCheckDay.Add(r.Properties["TimeCreated"].Value.ToString());
-                            var code = r.Properties["Message"].Value.ToString();
-                            int codeStart = code.IndexOf("0x");
-                            int codeLast = code.IndexOf("(") - codeStart;
-                            if(codeStart >0 && codeLast > 0)
-                                stopCode.Add(code.Substring(codeStart,codeLast));
-                            else
-                                Console.WriteLine("code-SubStringError");
-                        }
+                            else if (id == "1001")
+                            {
+                                bugCheckDay.Add(r.Properties["TimeCreated"].Value.ToString());
+                                var code = r.Properties["Message"].Value.ToString();
+                                int codeStart = code.IndexOf("0x");
+                                int codeLast = code.IndexOf("(") - codeStart;
+                                if (codeStart > 0 && codeLast > 0)
+                                    stopCode.Add(code.Substring(codeStart, codeLast));
+                                else
+                                    Console.WriteLine("code-SubStringError");
+                            }
+
+                            #endregion
+
+                        }                      
+
+                        flag = false;
+
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message + "\n以下のIDの情報が存在しない可能性あり\nID：" + noMessageId);
-            }
+                catch (Exception e)
+                {
+                    if (!loadComp)
+                    {
+                        MessageBox.Show(e.Message + "\nログが正常に読み取れませんでした．アプリケーションを再起動してください．");
+                        Application.Exit();
+                        break;
+                    }
+
+                    if (logApp)
+                        noAppIDs.Add(noMessageId);
+                    else
+                        noSysIDs.Add(noMessageId);
+                    ErrorListView.Items.Clear();
+
+                    form2.label = "例外発生を確認\nリストをリセット後，再度情報の解析を開始します．\n現在[" + noAppIDs.Count + noSysIDs.Count + "]回目";
+
+                }
+            } while (flag);
 
             char[] removeCharas = new char[] { '\r', '\n' };
 
@@ -279,7 +346,6 @@ namespace WindowsFormsApplication2
             ErrorListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             form2.Close();
             callSetList();
-            nowItem = 0;
 
         }
 
