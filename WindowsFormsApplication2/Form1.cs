@@ -379,7 +379,7 @@ namespace WindowsFormsApplication2
         {
             var text = "システムで最も多かったエラー：\nID：[" + MostFrequentlyID_System + "]\n回数：[" + counts_system + "]回\n\n" +
                        "アプリケーションで最も多かったエラー：\nID：[" + MostFrequentlyID_Application + "]\n回数：[" + counts + "]回\n\n" +
-                       "以上のIDのメッセージを参照してみてください.\n[ Error　ID ]で調べると情報が見つかりやすいです．\n検索例 : [ Error 109 ]";
+                       "以上のIDのメッセージを参照してみてください.\n[ログ名  Error　ID ]で調べると情報が見つかりやすいです．\n検索例 : [アプリケーション Error 109 ]";
 
             if (code_1000.Count > 0)
             {
@@ -472,6 +472,11 @@ namespace WindowsFormsApplication2
                 form5.Show();
                 form5.Activate();
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var suisoku = new suisokuClass(bugCheckDay,stopCode, ErrorListView);
         }
 
     }
