@@ -75,7 +75,7 @@ namespace WindowsFormsApplication2
 
                             if (flag)
                                 hoge.Add("ブルースクリーン発生日:" + bugday.ToString() +
-                                    ",ストップコード:" + stopCode[pos] +
+                                    "\nストップコード:" + stopCode[pos] +
                                     "\n推測原因エラーID:" + listViewItems[i].SubItems[1].Text +
                                     "\nエラー発生時間:" + listViewItems[i].SubItems[2].Text + "\n");
                         }

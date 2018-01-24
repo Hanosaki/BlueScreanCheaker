@@ -93,7 +93,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(202, 3);
+            this.button1.Location = new System.Drawing.Point(220, 3);
             this.button1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 34);
@@ -140,7 +140,7 @@
             this.button4.Font = new System.Drawing.Font("MS UI Gothic", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.button4.Location = new System.Drawing.Point(12, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(168, 34);
+            this.button4.Size = new System.Drawing.Size(191, 34);
             this.button4.TabIndex = 6;
             this.button4.Text = "推測された原因";
             this.button4.UseVisualStyleBackColor = true;
